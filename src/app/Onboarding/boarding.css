@@ -1,0 +1,13 @@
+
+/* Default selected tab styles */
+.react-tabs__tab--selected {
+    border-radius: 100% !important;
+    color: white !important;
+    background: #70A9F2 !important;
+    border: 1px solid #70A9F2 !important;
+  }
+  
+  /* Ensure the span inside the selected tab remains blue */
+  .react-tabs__tab--selected span {
+    color: #70A9F2 !important;
+  }

@@ -1,0 +1,10 @@
+/* Default selected tab styles */
+.react-tabs__tab--selected {
+  background: #a8c8f1 !important;
+  border: none !important;
+  border-radius: 8px !important;
+}
+
+.react-tabs__tab-panel--selected {
+  width: 100% !important;
+}
