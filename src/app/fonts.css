@@ -2,6 +2,32 @@ body {
   background: white;
 }
 
+/* headings */
+
+.main-heading {
+  color: #000;
+  font-weight: 400;
+  font-size: 20px;
+  font-style: normal;
+  line-height: 24px; /* 120% */
+}
+
+.sub-heading {
+  color: #000;
+  font-weight: 400;
+  font-size: 16px;
+  font-style: normal;
+  line-height: 20px; /* 120% */
+}
+
+.section-heading {
+  color: #000;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px;
+}
+
 /* this is for the global search input */
 
 .global-input {
@@ -249,6 +275,12 @@ body {
   text-decoration-line: underline;
 }
 
+.cards-bg {
+  border-radius: 20px;
+  background: var(--ice-blue-0, #f5f9ff);
+  padding: 20px 20px 20px;
+}
+
 /* badges */
 
 .new-badge {
@@ -428,6 +460,9 @@ background: rgba(112, 169, 242, 0.30);
 }
 .font-12 {
   font-size: 12px;
+}
+.font-10 {
+  font-size: 10px;
 }
 .font-8 {
   font-size: 8px;

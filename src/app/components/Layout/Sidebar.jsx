@@ -113,9 +113,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
             <div>
               <Link
-                href="/completed-orders"
+                href="/previous-orders"
                 className={`font-16 font-normal leading-5 gap-2 flex items-center justify-start ${
-                  pathname === "/completed-orders"
+                  pathname === "/previous-orders"
                     ? "text-[#007E8F]"
                     : "text-[#00000099]"
                 } hover:text-[#007E8F]`}
@@ -155,9 +155,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
             <div>
               <Link
-                href="/cancelled-orders"
+                href="#"
                 className={`font-16 font-normal leading-5 gap-2 flex items-center justify-start ${
-                  pathname === "/cancelled-orders"
+                  pathname === "#"
                     ? "text-[#000000]"
                     : "text-[#000000]"
                 } hover:text-[#000000]`}
