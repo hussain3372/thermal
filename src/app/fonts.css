@@ -77,7 +77,7 @@ body {
 }
 
 .secondary-blue {
-  color: #1559A8;
+  color: #1559a8;
 }
 
 .blue-color {
@@ -233,7 +233,7 @@ body {
 }
 
 .secondary-blue-btn {
-  background: #1559A8;
+  background: #1559a8;
   border: 1px solid transparent;
   border-radius: 8px;
   padding: 12px 32px;
@@ -247,10 +247,25 @@ body {
   letter-spacing: 0.25px;
   color: #ffffff;
 }
+.secondary-blue-btn-big {
+  background: #1559a8;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 12px 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 0.25px;
+  color: #ffffff;
+}
 
 .secondary-blue-btn-border {
   background: transparent;
-  border: 1px solid #1559A8;
+  border: 1px solid #1559a8;
   border-radius: 8px;
   padding: 12px 32px;
   display: flex;
@@ -261,11 +276,11 @@ body {
   font-weight: 400;
   line-height: normal;
   letter-spacing: 0.25px;
-  color: #1559A8;
+  color: #1559a8;
 }
 
 .check-detail-btn {
-  color: #1559A8;
+  color: #1559a8;
   text-align: right;
   font-size: 16px;
   font-style: normal;
@@ -300,13 +315,13 @@ body {
 
 .accepted-badge {
   border-radius: 8px;
-background: rgba(112, 169, 242, 0.30);
+  background: rgba(112, 169, 242, 0.3);
   display: flex;
   padding: 4px 20px;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  color: #1559A8;
+  color: #1559a8;
   font-size: 16px;
   font-weight: 500;
   line-height: normal;
@@ -382,7 +397,7 @@ background: rgba(112, 169, 242, 0.30);
   align-items: center;
   gap: 8px;
   border-radius: 2px;
-  background: var(--ice-blue-100, #1559A8);
+  background: var(--ice-blue-100, #1559a8);
   color: var(--color-gray-10, #fff);
   font-size: 14px;
   font-style: normal;

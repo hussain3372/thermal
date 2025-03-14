@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { GraphData } from "@/api/dashboard/graph"; // Import your API helper
 
 // Dynamically import react-apexcharts to avoid server-side rendering issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const Graph = () => {
   const [isMounted, setIsMounted] = useState(false);
+  // State to track the active time period tab
+  const [activeTab, setActiveTab] = useState("Hourly");
 
-  useEffect(() => {
-    setIsMounted(true); // Ensure this code only runs on the client
-  }, []);
-
-  const options = {
+  // Chart options and series that will be updated from API response
+  const [chartOptions, setChartOptions] = useState({
     chart: {
       id: "basic-bar",
       toolbar: {
@@ -25,17 +25,7 @@ const Graph = () => {
       show: false, // Remove the legend
     },
     xaxis: {
-      categories: [
-        "2/4",
-        "3/4",
-        "4/4",
-        "5/4",
-        "6/4",
-        "7/4",
-        "8/4",
-        "9/4",
-        "10/4",
-      ],
+      categories: [], // Will be updated with API data
     },
     yaxis: {
       min: 0,
@@ -60,21 +50,54 @@ const Graph = () => {
         },
       },
     },
-  };
+  });
+  const [chartSeries, setChartSeries] = useState([]);
 
-  const series = [
-    {
-      name: "series-1",
-      data: [20, 24, 26, 18, 14, 6, 16, 20, 17],
-      markers: {
-        show: true, // Display markers by default
-        size: 4, // Adjust the size of the markers
-        colors: ["#008000"], // Set the color of the markers
-        strokeColors: ["#008000"], // Set the stroke color of the markers
-        strokeWidth: 2, // Set the stroke width of the markers
-      },
-    },
-  ];
+  // Ensure client-only rendering
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Fetch graph data whenever the active tab changes
+  useEffect(() => {
+    const fetchGraphData = async () => {
+      try {
+        // Build the filters object based on the active tab.
+        // Only the active time period is set to true.
+        const filters = {
+          Hourly: activeTab === "Hourly",
+          Daily: activeTab === "Daily",
+          Weekly: activeTab === "Weekly",
+          Monthly: activeTab === "Monthly",
+          Yearly: activeTab === "Yearly",
+        };
+
+        const response = await GraphData(filters);
+        if (response && response.success) {
+          const data = response.data;
+          // Map API response to the required format for ApexCharts
+          const categories = data.map((item) => item.interval);
+          const seriesData = data.map((item) => item.total);
+
+          setChartOptions((prev) => ({
+            ...prev,
+            xaxis: { categories },
+          }));
+
+          setChartSeries([
+            {
+              name: activeTab,
+              data: seriesData,
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching graph data:", error);
+      }
+    };
+
+    fetchGraphData();
+  }, [activeTab]);
 
   if (!isMounted) {
     return null; // Prevent rendering on the server-side
@@ -88,21 +111,19 @@ const Graph = () => {
         </div>
         <div>
           <ul className="flex items-center gap-1">
-            <li className="text-[#00000066] font-10 font-normal leading-6 px-2 cursor-pointer rounded-sm hover:bg-white hover:text-black">
-              Hourly
-            </li>
-            <li className="text-[#00000066] font-10 font-normal leading-6 px-2 cursor-pointer rounded-sm hover:bg-white hover:text-black">
-              Daily
-            </li>
-            <li className="text-[#00000066] font-10 font-normal leading-6 px-2 cursor-pointer rounded-sm hover:bg-white hover:text-black">
-              Weekly
-            </li>
-            <li className="text-[#00000066] font-10 font-normal leading-6 px-2 cursor-pointer rounded-sm hover:bg-white hover:text-black">
-              Monthly
-            </li>
-            <li className="text-[#00000066] font-10 font-normal leading-6 px-2 cursor-pointer rounded-sm hover:bg-white hover:text-black">
-              Yearly
-            </li>
+            {["Hourly", "Daily", "Weekly", "Monthly", "Yearly"].map(
+              (period) => (
+                <li
+                  key={period}
+                  onClick={() => setActiveTab(period)}
+                  className={`text-[#00000066] font-10 font-normal leading-6 px-2 cursor-pointer rounded-sm hover:bg-white hover:text-black ${
+                    activeTab === period ? "bg-white text-black" : ""
+                  }`}
+                >
+                  {period}
+                </li>
+              )
+            )}
           </ul>
         </div>
       </div>
@@ -110,8 +131,8 @@ const Graph = () => {
       <div>
         <Chart
           id="chart"
-          options={options}
-          series={series}
+          options={chartOptions}
+          series={chartSeries}
           height={300}
           type="line"
         />

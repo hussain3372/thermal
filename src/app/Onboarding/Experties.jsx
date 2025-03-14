@@ -2,16 +2,71 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
+import { saveOnboardingData } from "@/api/onboarding/onboardingApi";
 
-const Experties = () => {
-  const [uploadedImage, setUploadedImage] = useState(null); // State to store the uploaded image
+const Experties = ({ setSelectedTab }) => {
+  // State for areas of expertise
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  // States for brand details
+  const [brandName, setBrandName] = useState("");
+  const [trainingDate, setTrainingDate] = useState("");
+  // State for certificate image upload
+  const [uploadedImage, setUploadedImage] = useState(null);
+  // API loading and error states
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Handle image change
+  const options = [
+    "Hydronic systems",
+    "Geothermal",
+    "Oil",
+    "Furnaces",
+    "AC",
+    "Water heaters",
+    "Ventilation systems",
+    "Ductless mini-split systems",
+  ];
+
+  // Toggle expertise options
+  const toggleSelection = (option) => {
+    setSelectedOptions((prev) =>
+      prev.includes(option)
+        ? prev.filter((item) => item !== option)
+        : [...prev, option]
+    );
+  };
+
+  // Handle image change for certificate upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const newImageUrl = URL.createObjectURL(file); // Create URL for the uploaded image
-      setUploadedImage(newImageUrl); // Update the uploaded image state
+      const newImageUrl = URL.createObjectURL(file);
+      setUploadedImage(newImageUrl);
+    }
+  };
+
+  // API submission handler
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError("");
+
+    // Build payload using keys expected by the backend.
+    // Now, if multiple options are selected, they are sent as an array.
+    const payload = {
+      "please_indicate_your_main_areas_of_specialty_and_any_relevant_training_or_brand_authorizations.": selectedOptions,
+      "brand_name": brandName,
+      "date_of_training": trainingDate,
+      "training_certificate": uploadedImage || null,
+    };
+
+    try {
+      await saveOnboardingData("Experties", payload);
+      console.log("Expertise data saved successfully:", payload);
+      setSelectedTab(4); // Move to the next tab
+    } catch (err) {
+      setError(err.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -29,133 +84,29 @@ const Experties = () => {
 
       <div className="mt-8 flex items-center justify-center">
         <div className="flex flex-col items-start justify-start flex-wrap gap-3">
-          <span className="font-24 font-normal leading-8 px-5 gap-3 rounded-2xl flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
+          {options.map((option) => (
+            <span
+              key={option}
+              className="font-24 font-normal leading-8 px-5 gap-3 rounded-2xl flex items-center cursor-pointer"
+              onClick={() => toggleSelection(option)}
             >
-              <path
-                d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM11.003 16L18.073 8.929L16.66 7.515L11.003 13.172L8.174 10.343L6.76 11.757L11.003 16Z"
-                fill="#70A9F2"
-              />
-            </svg>
-            Hydronic systems
-          </span>
-
-          <span className="font-24 font-normal leading-8 px-5 gap-3 rounded-2xl flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-            >
-              <path
-                d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM11.003 16L18.073 8.929L16.66 7.515L11.003 13.172L8.174 10.343L6.76 11.757L11.003 16Z"
-                fill="#70A9F2"
-              />
-            </svg>
-            Geothermal
-          </span>
-
-          <span className="font-24 font-normal leading-8 px-5 gap-3 rounded-2xl flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-            >
-              <path
-                d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM11.003 16L18.073 8.929L16.66 7.515L11.003 13.172L8.174 10.343L6.76 11.757L11.003 16Z"
-                fill="#70A9F2"
-              />
-            </svg>
-            Oil
-          </span>
-
-          <span className="font-24 font-normal leading-8 px-5 gap-3 rounded-2xl flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-            >
-              <path
-                d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM11.003 16L18.073 8.929L16.66 7.515L11.003 13.172L8.174 10.343L6.76 11.757L11.003 16Z"
-                fill="#70A9F2"
-              />
-            </svg>
-            Furnaces
-          </span>
-
-          <span className="font-24 font-normal leading-8 px-5 gap-3 rounded-2xl flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-            >
-              <path
-                d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM11.003 16L18.073 8.929L16.66 7.515L11.003 13.172L8.174 10.343L6.76 11.757L11.003 16Z"
-                fill="#70A9F2"
-              />
-            </svg>
-            AC
-          </span>
-
-          <span className="font-24 font-normal leading-8 px-5 gap-3 rounded-2xl flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-            >
-              <path
-                d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM11.003 16L18.073 8.929L16.66 7.515L11.003 13.172L8.174 10.343L6.76 11.757L11.003 16Z"
-                fill="#70A9F2"
-              />
-            </svg>
-            Water heaters
-          </span>
-
-          <span className="font-24 font-normal leading-8 px-5 gap-3 rounded-2xl flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-            >
-              <path
-                d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM11.003 16L18.073 8.929L16.66 7.515L11.003 13.172L8.174 10.343L6.76 11.757L11.003 16Z"
-                fill="#70A9F2"
-              />
-            </svg>
-            Ventilation systems
-          </span>
-
-          <span className="font-24 font-normal leading-8 px-5 gap-3 rounded-2xl flex items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="24"
-              viewBox="0 0 25 24"
-              fill="none"
-            >
-              <path
-                d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM11.003 16L18.073 8.929L16.66 7.515L11.003 13.172L8.174 10.343L6.76 11.757L11.003 16Z"
-                fill="#70A9F2"
-              />
-            </svg>
-            Ductless mini-split systems{" "}
-          </span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="24"
+                viewBox="0 0 25 24"
+                fill="none"
+              >
+                <g opacity={selectedOptions.includes(option) ? "1" : "0.2"}>
+                  <path
+                    d="M12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C17.523 2 22 6.477 22 12C22 17.523 17.523 22 12 22ZM11.003 16L18.073 8.929L16.66 7.515L11.003 13.172L8.174 10.343L6.76 11.757L11.003 16Z"
+                    fill="#114786"
+                  />
+                </g>
+              </svg>
+              {option}
+            </span>
+          ))}
         </div>
       </div>
 
@@ -167,23 +118,27 @@ const Experties = () => {
 
       <div className="flex flex-col gap-8 mt-8">
         <div className="grid sm:grid-cols-2 gap-8">
-          <div class="relative float-label-input mt-8">
+          <div className="relative float-label-input mt-8">
             <input
               type="text"
               placeholder="Enter Your Brand Name"
-              class=" w-full text-black font-16 font-semibold bg-transparent focus:outline-none focus:shadow-outline border border-[#000] rounded-lg py-3 px-3 leading-normal placeholder-black"
+              value={brandName}
+              onChange={(e) => setBrandName(e.target.value)}
+              className="w-full text-black font-16 font-semibold bg-transparent focus:outline-none focus:shadow-outline border border-[#000] rounded-lg py-3 px-3 leading-normal placeholder-black"
             />
-            <label class="absolute bg-[#fff] -top-3 left-3 lg:left-2 text-[#00000066] font-14 regular-class px-3">
+            <label className="absolute bg-[#fff] -top-3 left-3 lg:left-2 text-[#00000066] font-14 regular-class px-3">
               Brand Name
             </label>
           </div>
-          <div class="relative float-label-input mt-8">
+          <div className="relative float-label-input mt-8">
             <input
               type="text"
               placeholder="Enter Your Date of Training"
-              class=" w-full text-black font-16 font-semibold bg-transparent focus:outline-none focus:shadow-outline border border-[#000] rounded-lg py-3 px-3 leading-normal placeholder-black"
+              value={trainingDate}
+              onChange={(e) => setTrainingDate(e.target.value)}
+              className="w-full text-black font-16 font-semibold bg-transparent focus:outline-none focus:shadow-outline border border-[#000] rounded-lg py-3 px-3 leading-normal placeholder-black"
             />
-            <label class="absolute bg-[#fff] -top-3 left-3 lg:left-2 text-[#00000066] font-14 regular-class px-3">
+            <label className="absolute bg-[#fff] -top-3 left-3 lg:left-2 text-[#00000066] font-14 regular-class px-3">
               Date of Training
             </label>
           </div>
@@ -196,7 +151,6 @@ const Experties = () => {
         </div>
 
         <div>
-          {/* If an image is uploaded, show the uploaded image, else show the upload prompt */}
           {uploadedImage ? (
             <div className="border border-[#00000066] rounded-xl py-16 flex flex-col justify-center items-center gap-3">
               <Image
@@ -207,17 +161,17 @@ const Experties = () => {
                 className="rounded-lg"
               />
               <h1 className="text-[#1849D6] font-20 font-bold">
-                Upload Contractor Insurance Here
+                Certificate Uploaded
               </h1>
             </div>
           ) : (
             <div
               className="border border-[#00000066] rounded-xl py-16 flex flex-col justify-center items-center gap-3 cursor-pointer"
-              onClick={() => document.getElementById("imageUpload").click()} // Trigger file input on div click
+              onClick={() => document.getElementById("imageUpload").click()}
             >
               <Image src="/cloud.png" width={60} height={60} alt="cloud" />
               <h1 className="text-[#1849D6] font-20 font-bold">
-                Upload HVAC License Here
+                Upload Certificate Here
               </h1>
             </div>
           )}
@@ -228,9 +182,29 @@ const Experties = () => {
             id="imageUpload"
             accept="image/*"
             className="hidden"
-            onChange={handleImageChange} // Handle image upload
+            onChange={handleImageChange}
           />
         </div>
+      </div>
+
+      {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+
+      <div className="float-end gap-5 mt-16 py-3">
+        <button
+          className="secondary-blue-btn"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? "Saving..." : "Next"}
+        </button>
+      </div>
+      <div className="float-start gap-5 mt-16 py-3">
+        <button
+          className="secondary-blue-btn-border"
+          onClick={() => setSelectedTab(2)}
+        >
+          Back
+        </button>
       </div>
     </div>
   );

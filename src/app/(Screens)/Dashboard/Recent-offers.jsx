@@ -1,31 +1,66 @@
-import { completed } from "@/app/data/completed";
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import Loading from "@/app/loading";
+import { getOrdersByStatus } from "@/api/handleStatus/getOrder";
 
 const RecentOffers = () => {
+  const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch recent offers
+  useEffect(() => {
+    const fetchOffers = async () => {
+      const status = "offer";
+      try {
+        setLoading(true);
+        const data = await getOrdersByStatus(status); // API request for recent offers
+        if (data?.success) {
+          setOffers(data.data); // Set fetched offers
+        } else {
+          setError("No offers available.");
+        }
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+        setError("An error occurred while fetching offers.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOffers();
+  }, []);
+
+  if (loading) {
+    return <Loading />; // Show loading while fetching
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500">{error}</div>; // Show error message
+  }
+  
+
   return (
     <div>
       <div className="flex flex-col gap-6">
-        {completed.slice(0, 2).map((item, index) => (
+        {offers.slice(0, 2).map((order, index) => (
           <div
             key={index}
             className="section-bg md:flex justify-between items-center"
           >
             <div className="flex flex-col gap-4">
               <div className="flex gap-3">
-                <h1 className="font-16 font-bold leading-5 ">{item.name}</h1>
+                <h1 className="font-16 font-bold leading-5 ">
+                  {order.contractor_name || "Not specified"}
+                </h1>
                 <span className="font-12 font-normal leading-normal opacity-60">
-                  {item.id}
+                  {order.id || "Not specified"}
                 </span>
               </div>
-
               <div className="flex gap-2">
-                <div>
-                  <h1 className="text-[#1559A8] font-20 font-semibold leading-7 tracking-[0.15px]">
-                    $129
-                  </h1>
-                </div>
                 <Image
                   src="/location.svg"
                   width={20}
@@ -33,17 +68,12 @@ const RecentOffers = () => {
                   alt="location"
                 />
                 <span className="font-16 font-normal leading-normal opacity-35">
-                  {item.location}
+                  {order.location || "Not specified"}
                 </span>
               </div>
               <div>
-                <p className="font-12 normal-font leading-4 tracking-[0.15px] w-auto md:w-96 lg:w-auto">
-                  {item.desc.split("\n").map((line, i) => (
-                    <span key={i}>
-                      {line}
-                      <br className="hidden lg:block" />
-                    </span>
-                  ))}
+                <p className="font-12 font-normal leading-4 tracking-[0.15px] w-auto md:w-96 lg:w-auto">
+                  {order.desc || "Not specified"}
                 </p>
               </div>
             </div>
@@ -51,25 +81,26 @@ const RecentOffers = () => {
               <div className="flex items-center gap-2">
                 <Image
                   src="./calendar.svg"
-                  className=""
                   width={20}
                   height={20}
                   alt="calendar"
                 />
-                <h1 className="font-16 normal-font leading-5 md:text-end">
-                  {item.date}
+                <h1 className="font-16 font-normal leading-5 md:text-end">
+                  {order.created_at || "Not specified"}
                 </h1>
               </div>
 
               <div className="flex md:justify-end items-end">
-                <h1 className="completed-badge">{item.status}</h1>
+                <h1 className={`new-badge`}>
+                  {order.status || "Unknown"}
+                </h1>
               </div>
 
               <Link
-                href="/previous-detail"
+                href={`/orders/${order.id}`}
                 className="check-detail-btn flex md:justify-end items-end"
               >
-                {item.detailBtn}
+                More...
               </Link>
             </div>
           </div>

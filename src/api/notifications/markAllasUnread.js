@@ -1,0 +1,31 @@
+import axios from "axios";
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+export const markAllAsUnRead = async () => {
+  try {
+    // Retrieve the token from localStorage
+    const token = localStorage.getItem("auth_token");
+
+    if (!token) {
+      throw new Error("Authorization token is missing");
+    }
+
+    // Configure headers with the token
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+
+    // Make the API call with the corrected headers format
+    const response = await axios.get(
+      `${BASE_URL}/notification/all-as-unread`,
+      { headers } // Corrected format
+    );
+
+    return response.data; // Adjust based on the API response structure
+  } catch (error) {
+    console.error("Error:", error.response?.data || error.message);
+    throw error;
+  }
+};

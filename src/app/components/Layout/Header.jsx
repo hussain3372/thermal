@@ -8,12 +8,16 @@ import Notification from "./Notification";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { logout } from "@/api/auth/logout";
+import { getProfile } from "@/api/profile/getProfile";
 
 const Header = ({ toggleSidebar }) => {
   const [userName, setUserName] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [profile, setProfile] = useState(null);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] =
     useState(false);
+      // NEW: Add notification count state
+  const [notificationCount, setNotificationCount] = useState(0);
 
   const dropdownRef = useRef(null); // Ref to detect outside clicks for profile dropdown
   const notificationDropdownRef = useRef(null); // Ref to detect outside clicks for notification dropdown
@@ -66,15 +70,17 @@ const Header = ({ toggleSidebar }) => {
   };
 
   useEffect(() => {
-    // Retrieve the first name and last name from localStorage
-    const firstName = localStorage.getItem("firstname") || "Guest";
-    const lastName = localStorage.getItem("lastname") || "";
+    const fetchProfile = async () => {
+      try {
+        const data = await getProfile();
+        setProfile(data?.data);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
 
-    // Combine first and last name
-    setUserName(`${firstName} ${lastName}`.trim());
+    fetchProfile();
   }, []);
-
-  const pathname = usePathname();
   return (
     <div className="bg-[#F5F9FF] py-[14px] px-[10px] sm:px-[32px] w-full fixed top-0 z-10">
       <div className="flex justify-between items-center">
@@ -93,7 +99,8 @@ const Header = ({ toggleSidebar }) => {
           </div>
           <div className="hidden lg:block">
             <h1 className="font-20 font-normal leading-6">
-              Welcome, {userName} 👋
+              {/* Check if profile exists and has a name */}
+              {profile ? `Welcome, ${profile.name} 👋` : "Welcome, User 👋"}
             </h1>
           </div>
         </div>
@@ -114,7 +121,16 @@ const Header = ({ toggleSidebar }) => {
             </div>
           </div>
 
-          <Notification />
+            {/* Wrap Notification in a relative container and pass the onCountUpdate prop */}
+            <div className="relative">
+            <Notification onCountUpdate={setNotificationCount} />
+            {notificationCount > 0 && (
+              <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full text-xs px-1">
+                {notificationCount}
+              </span>
+            )}
+          </div>
+
 
           <div onClick={toggleDropdown} className="cursor-pointer">
             <Image
