@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -9,61 +9,79 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const Graph = () => {
   const [isMounted, setIsMounted] = useState(false);
-  // State to track the active time period tab
-  const [activeTab, setActiveTab] = useState("Hourly");
-
-  // Chart options and series that will be updated from API response
+  const [activeTab, setActiveTab] = useState("Yearly");
   const [chartOptions, setChartOptions] = useState({
     chart: {
       id: "basic-bar",
-      toolbar: {
-        show: false, // Remove the toolbar
-      },
+      toolbar: { show: false },
       height: 100,
+      animations: { enabled: true },
     },
-    legend: {
-      show: false, // Remove the legend
-    },
+    legend: { show: false },
     xaxis: {
-      categories: [], // Will be updated with API data
-    },
-    yaxis: {
-      min: 0,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    tooltip: {
-      x: {
-        format: "dd MMM yyyy",
+      categories: ["No Data"],
+      labels: {
+        show: true,
+        rotate: -45,
+        style: {
+          fontSize: "12px",
+        },
       },
+      tickAmount: 10,
+    },
+    yaxis: { 
+      min: 0,
+      tickAmount: 5,
+    },
+    stroke: { 
+      curve: "smooth",
+      width: 2,
+    },
+    markers: {
+      size: 4,
+      colors: ["#0000FF"], // Change this color to match your theme
+      strokeColors: "#fff",
+      strokeWidth: 2,
+      hover: {
+        size: 6,
+      },
+    },
+    tooltip: { 
+      x: { format: "dd MMM yyyy" },
+      y: {
+        formatter: function (value) {
+          return value === 0 ? "No Orders" : value;
+        }
+      }
     },
     grid: {
-      xaxis: {
-        lines: {
-          show: true,
-        },
-      },
-      yaxis: {
-        lines: {
-          show: true,
-        },
+      xaxis: { lines: { show: true } },
+      yaxis: { lines: { show: true } },
+      padding: {
+        left: 20,
+        right: 20,
       },
     },
+    noData: {
+      text: "No Data Available",
+      align: 'center',
+      verticalAlign: 'middle',
+      style: {
+        fontSize: '16px',
+      }
+    },
   });
-  const [chartSeries, setChartSeries] = useState([]);
+  const [chartSeries, setChartSeries] = useState([
+    { name: "Revenue", data: [0] },
+  ]);
 
-  // Ensure client-only rendering
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Fetch graph data whenever the active tab changes
   useEffect(() => {
     const fetchGraphData = async () => {
       try {
-        // Build the filters object based on the active tab.
-        // Only the active time period is set to true.
         const filters = {
           Hourly: activeTab === "Hourly",
           Daily: activeTab === "Daily",
@@ -73,35 +91,76 @@ const Graph = () => {
         };
 
         const response = await GraphData(filters);
-        if (response && response.success) {
+        console.log("gaph response", response);
+        if (response && response.success && response.data.length > 0) {
           const data = response.data;
-          // Map API response to the required format for ApexCharts
           const categories = data.map((item) => item.interval);
-          const seriesData = data.map((item) => item.total);
+          const seriesData = data.map((item) => Number(item.total) || 0);
 
           setChartOptions((prev) => ({
             ...prev,
-            xaxis: { categories },
+            xaxis: {
+              ...prev.xaxis,
+              categories,
+              labels: {
+                show: true,
+                rotate: -45,
+                style: {
+                  fontSize: "12px",
+                },
+              },
+            },
           }));
 
-          setChartSeries([
-            {
-              name: activeTab,
-              data: seriesData,
+          setChartSeries([{ 
+            name: activeTab, 
+            data: seriesData 
+          }]);
+        } else {
+          // Handle no data case
+          setChartOptions((prev) => ({
+            ...prev,
+            xaxis: {
+              ...prev.xaxis,
+              categories: ["No Data"],
+              labels: {
+                show: true,
+                rotate: 0,
+                style: {
+                  fontSize: "12px",
+                },
+              },
             },
-          ]);
+          }));
+          setChartSeries([{ 
+            name: activeTab, 
+            data: [0] 
+          }]);
         }
       } catch (error) {
         console.error("Error fetching graph data:", error);
+        setChartOptions((prev) => ({
+          ...prev,
+          xaxis: {
+            ...prev.xaxis,
+            categories: ["Error"],
+            labels: {
+              show: true,
+              rotate: 0,
+              style: {
+                fontSize: "12px",
+              },
+            },
+          },
+        }));
+        setChartSeries([{ name: activeTab, data: [0] }]);
       }
     };
 
     fetchGraphData();
   }, [activeTab]);
 
-  if (!isMounted) {
-    return null; // Prevent rendering on the server-side
-  }
+  if (!isMounted) return null;
 
   return (
     <div className="section-bg h-full">
