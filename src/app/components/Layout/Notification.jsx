@@ -112,7 +112,7 @@ const Notification = ({ onCountUpdate }) => {
       </div>
 
       {isNotificationDropdownOpen && (
-        <div className="absolute right-0 top-16 mt-2 w-[596px] max-w-xl rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 py-8 px-6">
+        <div className="absolute right-[-39px] sm:right-0 top-[70px] sm:top-16 -mt-10 w-[352px] sm:w-[596px] max-w-xl rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 py-8 px-6">
           <div className="flex justify-center items-center mb-10">
             <h1 className="font-24 font-semibold leading-8">Notifications</h1>
           </div>

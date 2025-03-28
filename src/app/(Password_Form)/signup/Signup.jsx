@@ -92,7 +92,7 @@ const Login = () => {
     <div>
       <div className="">
         <div className="grid md:grid-cols-2 items-center gap-[136px]">
-          <div>
+          <div className="hidden xl:block">
             <Image
               src="/signup.png"
               className="h-full w-full p-10 md:p-0"
@@ -102,7 +102,7 @@ const Login = () => {
             />
           </div>
 
-          <div className="flex flex-col justify-center items-center pr-[136px]">
+          <div className="flex flex-col justify-center items-center px-5 md:px-20">
             <h1 className="font-48 bold-font leading-[60px]"> Sign Up </h1>
 
             <form

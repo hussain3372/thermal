@@ -91,7 +91,7 @@ const ChangePassword = () => {
   return (
     <div>
       <div className="grid md:grid-cols-2 items-center gap-[136px]">
-        <div>
+        <div className="hidden xl:block">
           <Image
             src="/login.png" // Updated image for Change Password
             className="h-screen w-full p-10 md:p-0"
@@ -101,7 +101,7 @@ const ChangePassword = () => {
           />
         </div>
 
-        <div className="flex flex-col justify-center items-center pr-[136px]">
+        <div className="flex flex-col justify-center items-center px-5 md:px-20">
           <h1 className="font-48 bold-font leading-[60px] text-center">
             Change Password
           </h1>

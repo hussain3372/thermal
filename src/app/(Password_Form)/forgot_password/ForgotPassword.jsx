@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { forgot } from "../../../api/auth/forgotPassword"; // Ensure this function handles the forgot password API
 import Link from "next/link";
 
-const ForgotPassword = () => {  
+const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     email: "",
@@ -43,10 +43,12 @@ const ForgotPassword = () => {
         toast.success("OTP sent successfully! Please check your email.");
 
         localStorage.setItem("email", form.email);
-        
-          router.push("/password_reset_otp");
+
+        router.push("/password_reset_otp");
       } else {
-        toast.error(response.message || "Failed to send OTP. Please try again.");
+        toast.error(
+          response.message || "Failed to send OTP. Please try again."
+        );
       }
     } catch (error) {
       toast.error(error?.message || "An error occurred. Please try again.");
@@ -60,7 +62,7 @@ const ForgotPassword = () => {
     <div>
       <div className="">
         <div className="grid md:grid-cols-2 items-center gap-[136px]">
-          <div>
+          <div className="hidden xl:block">
             <Image
               src="/login.png" // Replace with an appropriate image for forgot password
               className="h-screen w-full p-10 md:p-0"
@@ -70,11 +72,14 @@ const ForgotPassword = () => {
             />
           </div>
 
-          <div className="flex flex-col justify-center items-center pr-[136px]">
+          <div className="flex flex-col justify-center items-center px-5 md:px-20">
             <h1 className="font-48 bold-font leading-[60px] text-center">
               Forgot Your Password?
             </h1>
-            <p className="text-center">Enter your email address to receive an OTP for reset your password.</p>
+            <p className="text-center">
+              Enter your email address to receive an OTP for reset your
+              password.
+            </p>
             <form
               className="mt-16 flex flex-col gap-8 w-full"
               onSubmit={handleForgotPassword}

@@ -141,7 +141,7 @@ const Notification = () => {
           </p>
         )}
 
-        <div className="flex justify-between items-center my-4">
+        <div className="flex flex-col md:flex-row justify-between gap-3 md:gap-0 items-start md:items-center my-4">
           <div className="flex items-center gap-3">
             {["all", "read", "unread"].map((type) => (
               <div
@@ -199,7 +199,7 @@ const Notification = () => {
                     : "border-l-4 border-[#1A9ACD] bg-[#F5F9FF]"
                 }`}
               >
-                <div className={`flex justify-between items-start`}>
+                <div className={`flex flex-col md:flex-row justify-between gap-3 md:gap-0 items-start md:items-center`}>
                   <div className="flex items-start gap-4">
                     <Image
                       src="/notification-icon.svg"
