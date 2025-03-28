@@ -41,7 +41,10 @@ const RecentOffers = () => {
   if (error) {
     return <div className="text-center text-red-500">{error}</div>; // Show error message
   }
-  
+
+  if (!offers || offers.length === 0) {
+    return <div className="text-center text-gray-500">No recent offers available</div>;
+  }
 
   return (
     <div>
